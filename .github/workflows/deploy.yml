@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      PUBLIC_BASE_PATH: /tuyo-mio
+      PUBLIC_BASE_PATH: /fenix
       PUBLIC_SUPABASE_URL: https://tzmyhmxxggeppjpuibjk.supabase.co
       PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ipn-ZrUmjlPQJp2b6epStw_TPltpDr3
     steps:

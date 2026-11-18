@@ -19,7 +19,7 @@ La portada carga su contenido desde Supabase. El panel `/admin/` usa Supabase Au
 
 Copia `.env.example` a `.env` para desarrollo local y configura `PUBLIC_SUPABASE_URL` y `PUBLIC_SUPABASE_PUBLISHABLE_KEY` también en el entorno de compilación/despliegue. No uses ni publiques una clave `service_role` en el navegador.
 
-GitHub Pages se publica desde la rama `main` en `https://webyonel.github.io/tuyo-mio/`. El workflow usa el prefijo `/tuyo-mio` y la publishable key (nunca la `service_role`).
+GitHub Pages se publica desde la rama `main` en `https://webyonel.github.io/fenix/`. El workflow usa el prefijo `/fenix` y la publishable key (nunca la `service_role`).
 
 ## Etapas de migración
 
