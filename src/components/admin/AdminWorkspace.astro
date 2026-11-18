@@ -1,0 +1,41 @@
+---
+import PlansPanel from './PlansPanel.astro';
+import HeroPanel from './HeroPanel.astro';
+import AboutPanel from './AboutPanel.astro';
+import AvailabilityPanel from './AvailabilityPanel.astro';
+import ProductsPanel from './ProductsPanel.astro';
+import GalleryPanel from './GalleryPanel.astro';
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+---
+<header class="admin-header" id="admin-header" hidden><a class="brand" href={base} aria-label="Fénix, inicio"><span>FÉNIX<small>ESTUDIO FOTOGRÁFICO</small></span></a><div class="admin-header-actions"><a class="admin-back" href={base}>← Volver al sitio</a><button class="outline-button" id="admin-signout" type="button">Cerrar sesión</button></div></header>
+<main class="admin-main" id="admin-app" hidden>
+	<div class="admin-title"><div><p class="eyebrow">PANEL DEL ESTUDIO</p><h1>Gestión de <em>contenido</em></h1><p class="admin-subtitle">Administra los planes, productos, galería y presentación del estudio.</p></div></div>
+	<aside class="local-warning"><strong>Contenido conectado a Supabase.</strong> Los cambios guardados se reflejan en el sitio público.</aside>
+	<nav class="admin-tabs" aria-label="Secciones de gestión" role="tablist">
+		<button class="admin-tab active" id="tab-plans" type="button" role="tab" aria-selected="true" aria-controls="panel-plans" data-panel="plans">Planes <span id="plan-count"></span></button>
+		<button class="admin-tab" id="tab-hero" type="button" role="tab" aria-selected="false" aria-controls="panel-hero" data-panel="hero">Portada</button>
+		<button class="admin-tab" id="tab-about" type="button" role="tab" aria-selected="false" aria-controls="panel-about" data-panel="about">Sobre nosotros</button>
+		<button class="admin-tab" id="tab-availability" type="button" role="tab" aria-selected="false" aria-controls="panel-availability" data-panel="availability">Disponibilidad</button>
+		<button class="admin-tab" id="tab-products" type="button" role="tab" aria-selected="false" aria-controls="panel-products" data-panel="products">Productos <span id="product-count"></span></button>
+		<button class="admin-tab" id="tab-gallery" type="button" role="tab" aria-selected="false" aria-controls="panel-gallery" data-panel="gallery">Galería <span id="gallery-count"></span></button>
+	</nav>
+	<div class="admin-panels">
+		<PlansPanel /><HeroPanel /><AboutPanel /><AvailabilityPanel /><ProductsPanel /><GalleryPanel />
+	</div>
+</main>
+<section class="admin-login" id="admin-login" hidden>
+	<a class="brand" href={base} aria-label="Fénix, inicio"><span>FÉNIX<small>ESTUDIO FOTOGRÁFICO</small></span></a>
+	<p class="eyebrow">PANEL DEL ESTUDIO</p><h1>Iniciar <em>sesión</em></h1>
+	<p>Acceso exclusivo para la cuenta administradora.</p>
+	<form id="login-form">
+		<label for="login-email">Correo electrónico</label><input id="login-email" name="email" type="email" autocomplete="username" required />
+		<label for="login-password">Contraseña</label><input id="login-password" name="password" type="password" autocomplete="current-password" required />
+		<button class="primary-button" type="submit">Entrar al panel</button>
+		<p class="login-error" id="login-error" role="alert"></p>
+	</form>
+</section>
+<dialog class="editor-dialog" id="editor-dialog"><form id="editor-form"><div class="dialog-heading"><div><p class="eyebrow" id="form-kicker">EDITAR CONTENIDO</p><h2 id="form-title"></h2></div><button class="close-dialog" type="button" aria-label="Cerrar">×</button></div><div class="form-fields" id="form-fields"></div><div class="dialog-actions"><button class="outline-button" type="button" id="cancel-edit">Cancelar</button><button class="primary-button" type="submit">Guardar cambios</button></div></form></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+	import '../../scripts/admin/controller';
+</script>

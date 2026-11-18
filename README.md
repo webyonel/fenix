@@ -1,46 +1,49 @@
-# Astro Starter Kit: Basics
+# Fénix — Estudio Fotográfico
 
-```sh
-pnpm create astro@latest -- --template basics
-```
+Migración gradual del sitio estático original a Astro con Supabase como backend.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Organización
 
-## 🚀 Project Structure
+- `src/pages/`: rutas Astro.
+- `src/components/`: componentes visuales reutilizables, organizados por sección de la página.
+- `src/styles/site.css`: estilos del diseño original y ajustes para la estructura Astro.
+- `src/lib/supabase/`: cliente y tipos de base de datos.
+- `src/lib/repositories/`: acceso tipado al contenido y al almacenamiento de imágenes.
+- `src/scripts/`: interacción del sitio público y del panel.
+- `public/img/`: fotografías y recursos estáticos del sitio original.
+- `supabase/migrations/`: esquema, políticas RLS y contenido inicial.
 
-Inside of your Astro project, you'll see the following folders and files:
+La portada carga su contenido desde Supabase. El panel `/admin/` usa Supabase Auth, Postgres y Storage; el correo administrador está limitado mediante una lista privada y RLS. El bucket `site-media` permite lectura pública de imágenes y limita escrituras al administrador.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+## Variables de entorno
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Copia `.env.example` a `.env` para desarrollo local y configura `PUBLIC_SUPABASE_URL` y `PUBLIC_SUPABASE_PUBLISHABLE_KEY` también en el entorno de compilación/despliegue. No uses ni publiques una clave `service_role` en el navegador.
 
-## 🧞 Commands
+GitHub Pages se publica desde la rama `main` en `https://webyonel.github.io/tuyo-mio/`. El workflow usa el prefijo `/tuyo-mio` y la publishable key (nunca la `service_role`).
 
-All commands are run from the root of the project, from a terminal:
+## Etapas de migración
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+- [x] Diseño de la portada y el panel de administración (interfaz visual sin conexión a backend).
+- [x] Lectura pública desde Supabase: contenido del hero y presentación, categorías/planes, productos, galería y disponibilidad.
+- [x] Servicios Extras por seis categorías fijas; portadas editables y productos administrables por categoría.
+- [x] Tasa USD/CUP editable en Administración y usada en los precios públicos de planes/productos (valor inicial: 800).
+- [x] Consulta de planes por categoría, calendario con domingos/días ocupados bloqueados y confirmación por WhatsApp.
+- [x] Panel con autenticación, operaciones de contenido e imágenes conectado a Postgres/Storage y protegido con RLS.
+- [ ] Crear el usuario administrador en Supabase Auth y probar los cambios autenticados de extremo a extremo.
+- [ ] Completar/verificar navegación móvil y revisar accesibilidad y comportamiento responsive.
+- [ ] Configurar las variables en el proveedor de despliegue y probar el sitio publicado.
 
-## 👀 Want to learn more?
+La lista sirve como inventario de trabajo; no se debe retirar una capacidad del sitio original sin acordarlo primero.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Las portadas iniciales de Servicios Extras son provisionales y se pueden cambiar desde el panel. El antiguo producto “Pullovers personalizados” se conserva sin categoría para que no desaparezca ni se publique bajo un rubro incorrecto; se puede reasignar desde Administración.
+
+## Comandos
+
+| Comando | Acción |
+| --- | --- |
+| `pnpm install` | Instala las dependencias |
+| `pnpm dev` | Inicia el servidor de desarrollo en `localhost:4321` |
+| `pnpm build` | Genera el sitio en `dist/` |
+| `pnpm preview` | Previsualiza el sitio generado |
+
+La página principal está en `src/pages/index.astro`.

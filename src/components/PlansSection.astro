@@ -1,0 +1,32 @@
+---
+import SocialLinks from './SocialLinks.astro';
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+
+const categories = [
+	{ slug: 'ninos', name: 'Niños', image: 'ninos-2.webp', count: 1 },
+	{ slug: 'quinceaneras', name: 'Quinceañeras', image: 'quinceaneras-1.webp', count: 1 },
+	{ slug: 'quinceaneros', name: 'Quinceañeros', image: 'quinceaneros-1.webp', count: 5 },
+	{ slug: 'bodas', name: 'Bodas', image: 'bodas-1.webp', count: 1 },
+	{ slug: 'embarazadas', name: 'Embarazadas', image: 'embarazadas-1.webp', count: 1 },
+	{ slug: 'planes-individuales', name: 'Planes Individuales', image: 'ninos-3.webp', count: 3 },
+	{ slug: 'en-promocion', name: 'En promoción', image: 'ninos-1.webp', count: 1 },
+];
+---
+<section class="section-wrap plans" id="planes">
+	<div class="section-heading"><div><p class="eyebrow">ELIGE TU EXPERIENCIA</p><h2>Nuestros <em>planes</em></h2></div><p>Encuentra la sesión que mejor cuenta tu historia.</p></div>
+	<div class="plan-categories" id="plan-categories" role="group" aria-label="Categorías de planes">
+		{categories.map(({ slug, name, image, count }) => <button class="category-card" type="button" data-plan-category={slug} aria-label={`Ver ${count} ofertas de ${name}`}>
+			<img src={`${base}img/portafolio/${image}`} alt="" loading="lazy" /><span class="category-card-shade"></span>
+			<span class="category-card-copy"><strong>{name}</strong><small>{count} {count === 1 ? 'oferta' : 'ofertas'} <i>↗</i></small></span>
+		</button>)}
+	</div>
+	<div class="plans-follow"><p>Síguenos para conocer novedades, promociones y nuevos trabajos</p><SocialLinks /></div>
+</section>
+<dialog class="plans-dialog" id="plans-dialog" aria-labelledby="plans-dialog-heading">
+	<div class="plans-dialog-inner"><div class="plans-dialog-header"><div><p class="eyebrow">ELIGE TU EXPERIENCIA</p><h2 id="plans-dialog-heading">Planes</h2></div><button class="booking-close" id="plans-dialog-close" type="button" aria-label="Cerrar ofertas">×</button></div><div class="plan-grid" id="public-plan-list"></div></div>
+</dialog>
+<dialog class="booking-dialog" id="booking-dialog" aria-labelledby="booking-heading">
+	<div class="booking-dialog-inner"><div class="booking-header"><div><p class="eyebrow">RESERVA TU SESIÓN</p><h2 id="booking-heading">Elige un <em>día</em></h2><p class="booking-plan">Oferta: <strong id="booking-plan-name"></strong></p></div><button class="booking-close" id="booking-close" type="button" aria-label="Cerrar calendario">×</button></div>
+		<div class="calendar-toolbar"><button id="booking-prev" type="button" aria-label="Mes anterior">←</button><h3 id="booking-month"></h3><button id="booking-next" type="button" aria-label="Mes siguiente">→</button></div><div class="calendar-weekdays" aria-hidden="true"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div><div class="calendar-days" id="booking-days"></div><div class="calendar-legend"><span><i></i> Disponible</span><span><i class="legend-busy"></i> Ocupado</span><span><i class="legend-sunday"></i> Domingo: cerrado</span></div><p class="booking-selected" id="booking-selected" aria-live="polite">Selecciona un día disponible.</p><p class="booking-note">La solicitud se confirma por WhatsApp. Los domingos no se trabaja.</p><button class="button button-dark booking-confirm" id="booking-confirm" type="button" disabled>Confirmar día y continuar <span>↗</span></button>
+	</div>
+</dialog>

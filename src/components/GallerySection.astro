@@ -1,0 +1,14 @@
+---
+const photos = [
+	['bodas-1.webp', 'Pareja de recién casados en el jardín'], ['bodas-2.webp', 'Retrato de novia con su vestido'], ['bodas-3.webp', 'Novios celebrando su boda'],
+	['embarazadas-1.webp', 'Sesión artística de maternidad'], ['embarazadas-2.webp', 'Retrato de maternidad'], ['embarazadas-3.webp', 'Sesión familiar de maternidad'],
+	['ninos-1.webp', 'Sesión infantil al aire libre'], ['ninos-2.webp', 'Retrato infantil con flores'], ['ninos-3.webp', 'Retrato de niño en exterior'],
+	['quinceaneras-1.webp', 'Retrato de quinceañera'], ['quinceaneras-2.webp', 'Quinceañera con vestido azul'], ['quinceaneras-3.webp', 'Retrato de quinceañera en estudio'],
+	['quinceaneros-1.webp', 'Retrato formal de quinceañero'], ['quinceaneros-2.webp', 'Retrato de quinceañero'], ['quinceaneros-3.webp', 'Quinceañero con traje beige'],
+];
+const galleryPhotos = [...photos, ...photos];
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+---
+<section class="gallery" id="galeria"><div class="gallery-heading"><p class="eyebrow">UN VISTAZO A NUESTRO UNIVERSO</p><h2>Algunos <em>Trabajos</em></h2><p>Instantes reales, recuerdos para siempre.</p></div>
+	<div class="gallery-viewport"><div class="gallery-grid is-looping" id="managed-gallery">{galleryPhotos.map(([image, alt], index) => <img src={`${base}img/portafolio/${image}`} alt={alt} loading={index < photos.length ? 'lazy' : 'eager'} aria-hidden={index >= photos.length ? 'true' : undefined} />)}</div></div>
+</section>

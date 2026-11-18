@@ -1,0 +1,11 @@
+---
+const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+---
+<section class="about-section" id="sobre-nosotros" aria-labelledby="about-heading">
+	<div class="about-copy">
+		<p class="eyebrow">UN ESPACIO PARA TUS HISTORIAS</p>
+		<h2 id="about-heading">Sobre <em>nosotros</em></h2>
+		<div id="about-paragraphs"><p>En Fénix creemos que cada persona tiene una historia que merece ser contada con sensibilidad y autenticidad.</p><p>Creamos un espacio cercano y cuidado para convertir tus momentos especiales en recuerdos que te acompañen siempre.</p></div>
+	</div>
+	<div class="about-image-wrap"><img id="about-image" src={`${base}img/hero-fenix.webp`} alt="Pareja de recién casados en una sesión al aire libre" loading="lazy" /></div>
+</section>
