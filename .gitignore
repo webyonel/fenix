@@ -26,3 +26,10 @@ pnpm-debug.log*
 # local environment (keep .env.example versioned)
 .env.*
 !.env.example
+supabase/migrations/20261121081720_seed_quinceaneros_offers.sql
+supabase/migrations/20261121082419_seed_ninos_offers.sql
+supabase/migrations/20261121082939_seed_bodas_offers.sql
+supabase/migrations/20261121083237_seed_embarazadas_offers.sql
+supabase/migrations/20261121083520_seed_quinceaneras_offers.sql
+supabase/migrations/20261121084023_seed_individual_photo_prices.sql
+supabase/migrations/20261121084258_seed_individual_canvas_services.sql

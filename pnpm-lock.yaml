@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@astrojs/sitemap':
+        specifier: 3.7.6
+        version: 3.7.6
       '@supabase/supabase-js':
         specifier: 2.119.0
         version: 2.119.0
@@ -123,6 +126,9 @@ packages:
   '@astrojs/prism@4.0.2':
     resolution: {integrity: sha512-KTivpmnz6lDsC6o9H4+DNm2SrE/GHzw8cNAvEJwAvUT+eoaEnn/4NtbDNfRRaxaJHdp15gf+tfHAWiXR4wB3BA==}
     engines: {node: '>=22.12.0'}
+
+  '@astrojs/sitemap@3.7.6':
+    resolution: {integrity: sha512-QEKD3ubC0iJxpNzC4KvcKdxSP97U5SjuQ16+VkmUwx1TT+Hq7TIV8QGm/d2pvkN6+3GqGXLRzm7j6lZxHETm3A==}
 
   '@astrojs/telemetry@3.3.3':
     resolution: {integrity: sha512-C1TLn5sPJr0x4vk56piHWKbnqlEB8BKyte5Y45V02U+D7BGO5eMqZDH5aPjnkXQWJggvmsTXxH03QMZ9NgWLzQ==}
@@ -782,6 +788,9 @@ packages:
   '@types/node@22.20.5':
     resolution: {integrity: sha512-U2+DNr+wSjpsTS/wZGYHq7GcwfuSmKiKvoPvK22zwTlRhU91yOniN4qRR5KhIjvif7ysw/dz/hKmfDH0Ris4aA==}
 
+  '@types/sax@1.2.7':
+    resolution: {integrity: sha512-rO73L89PJxeYM3s3pPPjiPgVVcymqU490g0YO5n5By0k2Erzj6tay/4lr1CHAAU4JyOWd1rpQ8bCf6cZfHU96A==}
+
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
@@ -1404,6 +1413,11 @@ packages:
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
 
+  sitemap@10.0.0:
+    resolution: {integrity: sha512-KSjl4H4KBEnGX5KXgzInPAycdOFhwLar0EmksDcYn6NqW2O+zLiMGeV2THE6tpuv3LCVdv+6xsSo2SWLGaBDKw==}
+    engines: {node: '>=22.22.1', npm: '>=10.8.2'}
+    hasBin: true
+
   smol-toml@1.7.0:
     resolution: {integrity: sha512-aqVvWoyO21L23mb+drl4RmMXbf6N7FdHjAhTRA9ZBL7apWBgfWC16KjrASI+1p9GAroljyMHj6fK67i0UiTNvQ==}
     engines: {node: '>= 18'}
@@ -1770,6 +1784,9 @@ packages:
   zod@4.4.3:
     resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
 
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
+
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
@@ -1891,6 +1908,11 @@ snapshots:
   '@astrojs/prism@4.0.2':
     dependencies:
       prismjs: 1.30.0
+
+  '@astrojs/sitemap@3.7.6':
+    dependencies:
+      sitemap: 10.0.0
+      zod: 4.6.7
 
   '@astrojs/telemetry@3.3.3':
     dependencies:
@@ -2385,6 +2407,10 @@ snapshots:
   '@types/node@22.20.5':
     dependencies:
       undici-types: 6.21.0
+
+  '@types/sax@1.2.7':
+    dependencies:
+      '@types/node': 22.20.5
 
   '@types/unist@3.0.3': {}
 
@@ -3104,6 +3130,12 @@ snapshots:
 
   sisteransi@1.0.5: {}
 
+  sitemap@10.0.0:
+    dependencies:
+      '@types/node': 22.20.5
+      '@types/sax': 1.2.7
+      sax: 1.6.0
+
   smol-toml@1.7.0: {}
 
   source-map-js@1.2.1: {}
@@ -3401,5 +3433,7 @@ snapshots:
   yocto-queue@1.2.2: {}
 
   zod@4.4.3: {}
+
+  zod@4.6.7: {}
 
   zwitch@2.0.4: {}
