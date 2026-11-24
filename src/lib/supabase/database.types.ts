@@ -21,12 +21,6 @@ export interface Database {
 				Update: { slug?: string; name?: string; cover_path?: string; position?: number; updated_at?: string };
 				Relationships: [];
 			};
-			product_categories: {
-				Row: { slug: string; name: string; cover_path: string; position: number; updated_at: string };
-				Insert: { slug: string; name: string; cover_path: string; position: number; updated_at?: string };
-				Update: { slug?: string; name?: string; cover_path?: string; position?: number; updated_at?: string };
-				Relationships: [];
-			};
 			plans: {
 				Row: { id: string; category_slug: string; name: string; description: string; features: string[]; price_usd: number; image_path: string; position: number; created_at: string; updated_at: string };
 				Insert: { id?: string; category_slug: string; name: string; description: string; features?: string[]; price_usd: number; image_path: string; position?: number; created_at?: string; updated_at?: string };
@@ -34,15 +28,15 @@ export interface Database {
 				Relationships: [{ foreignKeyName: 'plans_category_slug_fkey'; columns: ['category_slug']; isOneToOne: false; referencedRelation: 'plan_categories'; referencedColumns: ['slug'] }];
 			};
 			products: {
-				Row: { id: string; category_slug: string | null; name: string; description: string; price_usd: number; image_path: string; position: number; created_at: string; updated_at: string };
-				Insert: { id?: string; category_slug?: string | null; name: string; description: string; price_usd: number; image_path: string; position?: number; created_at?: string; updated_at?: string };
-				Update: { id?: string; category_slug?: string | null; name?: string; description?: string; price_usd?: number; image_path?: string; position?: number; updated_at?: string };
-				Relationships: [{ foreignKeyName: 'products_category_slug_fkey'; columns: ['category_slug']; isOneToOne: false; referencedRelation: 'product_categories'; referencedColumns: ['slug'] }];
+				Row: { id: string; name: string; description: string; price_usd: number; image_path: string; position: number; created_at: string; updated_at: string };
+				Insert: { id?: string; name: string; description: string; price_usd: number; image_path: string; position?: number; created_at?: string; updated_at?: string };
+				Update: { id?: string; name?: string; description?: string; price_usd?: number; image_path?: string; position?: number; updated_at?: string };
+				Relationships: [];
 			};
 			site_settings: {
-				Row: { id: boolean; hero_title_line: string; hero_title_emphasis: string; hero_text_color: string; hero_image_path: string; hero_image_alt: string; about_paragraphs: string[]; about_image_path: string; about_image_alt: string; cup_per_usd: number; updated_at: string };
-				Insert: { id?: boolean; hero_title_line?: string; hero_title_emphasis?: string; hero_text_color?: string; hero_image_path?: string; hero_image_alt?: string; about_paragraphs?: string[]; about_image_path?: string; about_image_alt?: string; cup_per_usd?: number; updated_at?: string };
-				Update: { id?: boolean; hero_title_line?: string; hero_title_emphasis?: string; hero_text_color?: string; hero_image_path?: string; hero_image_alt?: string; about_paragraphs?: string[]; about_image_path?: string; about_image_alt?: string; cup_per_usd?: number; updated_at?: string };
+				Row: { id: boolean; hero_title_line: string; hero_title_emphasis: string; hero_text_color: string; hero_image_path: string; hero_image_alt: string; about_paragraphs: string[]; about_image_path: string; about_image_alt: string; cup_per_usd: number; products_card_image_path: string; products_card_image_alt: string; updated_at: string };
+				Insert: { id?: boolean; hero_title_line?: string; hero_title_emphasis?: string; hero_text_color?: string; hero_image_path?: string; hero_image_alt?: string; about_paragraphs?: string[]; about_image_path?: string; about_image_alt?: string; cup_per_usd?: number; products_card_image_path?: string; products_card_image_alt?: string; updated_at?: string };
+				Update: { id?: boolean; hero_title_line?: string; hero_title_emphasis?: string; hero_text_color?: string; hero_image_path?: string; hero_image_alt?: string; about_paragraphs?: string[]; about_image_path?: string; about_image_alt?: string; cup_per_usd?: number; products_card_image_path?: string; products_card_image_alt?: string; updated_at?: string };
 				Relationships: [];
 			};
 		};

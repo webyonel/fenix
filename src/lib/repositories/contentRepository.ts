@@ -8,11 +8,10 @@ function requireData<T>(data: T | null, error: { message: string } | null): T {
 }
 
 export async function loadSiteContent() {
-	const [settings, categories, plans, productCategories, products, gallery, busyDates] = await Promise.all([
+	const [settings, categories, plans, products, gallery, busyDates] = await Promise.all([
 		supabase.from('site_settings').select('*').eq('id', true).single(),
 		supabase.from('plan_categories').select('*').order('position'),
 		supabase.from('plans').select('*').order('position').order('created_at'),
-		supabase.from('product_categories').select('*').order('position'),
 		supabase.from('products').select('*').order('position').order('created_at'),
 		supabase.from('gallery_items').select('*').order('position').order('created_at'),
 		supabase.from('busy_dates').select('date').order('date'),
@@ -21,7 +20,6 @@ export async function loadSiteContent() {
 		settings: requireData(settings.data, settings.error),
 		categories: requireData(categories.data, categories.error),
 		plans: requireData(plans.data, plans.error),
-		productCategories: requireData(productCategories.data, productCategories.error),
 		products: requireData(products.data, products.error),
 		gallery: requireData(gallery.data, gallery.error),
 		busyDates: requireData(busyDates.data, busyDates.error).map(({ date }) => date),
@@ -56,11 +54,6 @@ export async function removeProduct(id: string) {
 
 export async function saveCategoryCover(slug: string, coverPath: string) {
 	const { error } = await supabase.from('plan_categories').update({ cover_path: coverPath }).eq('slug', slug);
-	if (error) throw error;
-}
-
-export async function saveProductCategoryCover(slug: string, coverPath: string) {
-	const { error } = await supabase.from('product_categories').update({ cover_path: coverPath }).eq('slug', slug);
 	if (error) throw error;
 }
 

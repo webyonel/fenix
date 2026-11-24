@@ -8,7 +8,6 @@ import {
 	removeProduct,
 	removeStoredImage,
 	saveCategoryCover,
-	saveProductCategoryCover,
 	savePlan,
 	saveProduct,
 	saveSettings,
@@ -30,11 +29,11 @@ const dateKey = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() 
 
 let content: Content | null = null;
 let selectedCategory = '';
-let selectedProductCategory = '';
 let calendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 let editing: { type: EditorType; id?: string } | null = null;
 let pendingImage: File | null = null;
 let pendingImagePreview = '';
+let productsCardPreviewUrl = '';
 let toastTimer = 0;
 const formSubmissionLocks = new WeakMap<HTMLFormElement, Array<{ button: HTMLButtonElement; text: string; disabled: boolean }>>();
 
@@ -101,7 +100,6 @@ async function showAdmin() {
 	try {
 		content = await loadSiteContent();
 		selectedCategory ||= content.categories[0]?.slug ?? '';
-		selectedProductCategory ||= content.productCategories[0]?.slug ?? '';
 		render();
 	} catch (error) {
 		showLogin(`No se pudo cargar el contenido: ${error instanceof Error ? error.message : 'error desconocido'}`);
@@ -116,8 +114,6 @@ function render() {
 	renderCategoryCovers();
 	renderPlanCategoryFilters();
 	renderPlans();
-	renderProductCategoryCovers();
-	renderProductCategoryFilters();
 	renderProducts();
 	renderGallery();
 	renderAvailability();
@@ -158,39 +154,11 @@ function renderPlans() {
 function renderProducts() {
 	if (!content) return;
 	const cupPerUsd = Number(content.settings.cup_per_usd);
-	const category = content.productCategories.find(({ slug }) => slug === selectedProductCategory);
-	const products = selectedProductCategory === 'uncategorized'
-		? content.products.filter((product) => product.category_slug === null)
-		: content.products.filter((product) => product.category_slug === selectedProductCategory);
-	$('#products-list')!.innerHTML = products.length ? products.map((product) => `
+	$('#products-list')!.innerHTML = content.products.length ? content.products.map((product) => `
 		<article class="managed-item"><img src="${escapeHtml(imageSource(product.image_path))}" alt="" />
-			<div class="item-info"><span class="item-kicker">${escapeHtml(product.category_slug ? category?.name ?? 'PRODUCTO' : 'SIN CATEGORÍA')}</span><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p><div class="item-price">${money(product.price_usd)} USD · ${money(product.price_usd * cupPerUsd)} CUP</div></div>
+			<div class="item-info"><span class="item-kicker">PRODUCTO</span><h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p><div class="item-price">${money(product.price_usd)} USD · ${money(product.price_usd * cupPerUsd)} CUP</div></div>
 			<div class="item-actions"><button class="small-button" type="button" data-action="edit-product" data-id="${product.id}">Editar</button><button class="small-button delete" type="button" data-action="delete-product" data-id="${product.id}">Eliminar</button></div>
 		</article>`).join('') : '<div class="empty-state">Aún no hay productos. Usa “Agregar producto” para crear uno.</div>';
-}
-
-function renderProductCategoryCovers() {
-	if (!content) return;
-	$('#product-category-cover-list')!.innerHTML = content.productCategories.map((category) => `
-		<article class="category-cover-item">
-			<img src="${escapeHtml(imageSource(category.cover_path))}" alt="Portada de ${escapeHtml(category.name)}" />
-			<div><strong>${escapeHtml(category.name)}</strong><label class="small-button category-cover-upload">Cambiar foto<input type="file" accept="image/*" data-product-category-cover="${escapeHtml(category.slug)}" /></label></div>
-		</article>`).join('');
-}
-
-function renderProductCategoryFilters() {
-	if (!content) return;
-	const filters = content.productCategories.map((category) => {
-		const selected = selectedProductCategory === category.slug;
-		const count = content!.products.filter((product) => product.category_slug === category.slug).length;
-		return `<button class="category-chip${selected ? ' active' : ''}" type="button" data-product-admin-category="${escapeHtml(category.slug)}" aria-pressed="${selected}">${escapeHtml(category.name)} <span>${count}</span></button>`;
-	});
-	const uncategorizedCount = content.products.filter((product) => product.category_slug === null).length;
-	if (uncategorizedCount) {
-		const selected = selectedProductCategory === 'uncategorized';
-		filters.push(`<button class="category-chip${selected ? ' active' : ''}" type="button" data-product-admin-category="uncategorized" aria-pressed="${selected}">Sin categoría <span>${uncategorizedCount}</span></button>`);
-	}
-	$('#admin-product-categories')!.innerHTML = filters.join('');
 }
 
 function renderGallery() {
@@ -233,6 +201,7 @@ function populateSettingsForms() {
 	($('#about-image-value') as HTMLInputElement).value = settings.about_image_path;
 	($('#about-image-preview') as HTMLImageElement).src = imageSource(settings.about_image_path);
 	($('#cup-per-usd') as HTMLInputElement).value = String(settings.cup_per_usd);
+	($('#products-card-image-preview') as HTMLImageElement).src = imageSource(settings.products_card_image_path);
 }
 
 function switchTab(tab: HTMLButtonElement) {
@@ -251,14 +220,9 @@ function openEditor(type: EditorType, item?: Plan | Product) {
 	pendingImage = null;
 	pendingImagePreview = '';
 	const isPlan = type === 'plan';
-	const categories = isPlan ? content.categories : content.productCategories;
-	const currentCategory = isPlan ? (item as Plan | undefined)?.category_slug : (item as Product | undefined)?.category_slug ?? '';
-	const initialCategory = item ? currentCategory : isPlan ? selectedCategory : selectedProductCategory;
 	$('#form-kicker')!.textContent = item ? 'EDITAR CONTENIDO' : 'NUEVO CONTENIDO';
 	$('#form-title')!.textContent = `${item ? 'Editar' : 'Agregar'} ${isPlan ? 'plan' : 'producto'}`;
-	const categoryOptions = categories.map((category) => `<option value="${escapeHtml(category.slug)}"${initialCategory === category.slug ? ' selected' : ''}>${escapeHtml(category.name)}</option>`).join('');
-	const emptyCategoryOption = !initialCategory ? '<option value="" selected disabled>Selecciona una categoría</option>' : '';
-	const categoryField = `<div class="field"><label for="item-category">Categoría</label><select id="item-category" name="category" required>${emptyCategoryOption}${categoryOptions}</select></div>`;
+	const categoryField = isPlan ? `<div class="field"><label for="item-category">Categoría</label><select id="item-category" name="category" required>${content.categories.map((category) => `<option value="${escapeHtml(category.slug)}"${(item as Plan | undefined)?.category_slug === category.slug || (!item && category.slug === selectedCategory) ? ' selected' : ''}>${escapeHtml(category.name)}</option>`).join('')}</select></div>` : '';
 	const featuresField = isPlan ? `<div class="field full"><label for="item-features">Características</label><textarea id="item-features" name="features" placeholder="Una característica por línea" required>${escapeHtml((item as Plan | undefined)?.features.join('\n') ?? '')}</textarea><span class="field-hint">Una característica por línea. El precio en CUP usa el cambio configurado en Productos.</span></div>` : '';
 	const existingImage = item?.image_path ?? '';
 	$('#form-fields')!.innerHTML = `${categoryField}
@@ -314,17 +278,13 @@ async function persistEditorChanges() {
 		await savePlan(values, id);
 		selectedCategory = values.category_slug;
 	} else {
-		const categorySlug = String(form.get('category') ?? '');
-		if (!categorySlug) throw new Error('Selecciona una categoría para el producto.');
 		await saveProduct({
-			category_slug: categorySlug,
 			name,
 			description,
 			price_usd: price,
 			image_path: imagePath,
 			position: oldItem?.position ?? content.products.length,
 		}, id);
-		selectedProductCategory = categorySlug;
 	}
 	if (pendingImage && oldItem?.image_path) await removeStoredImage(oldItem.image_path).catch(() => undefined);
 	pendingImage = null;
@@ -337,8 +297,6 @@ async function persistEditorChanges() {
 async function refreshContent() {
 	content = await loadSiteContent();
 	if (!content.categories.some(({ slug }) => slug === selectedCategory)) selectedCategory = content.categories[0]?.slug ?? '';
-	if (!content.productCategories.some(({ slug }) => slug === selectedProductCategory) && selectedProductCategory !== 'uncategorized') selectedProductCategory = content.productCategories[0]?.slug ?? '';
-	if (selectedProductCategory === 'uncategorized' && !content.products.some((product) => product.category_slug === null)) selectedProductCategory = content.productCategories[0]?.slug ?? '';
 	render();
 }
 
@@ -431,19 +389,34 @@ async function handleCategoryCover(event: Event) {
 	notify('Portada de categoría actualizada.');
 }
 
-async function handleProductCategoryCover(event: Event) {
+async function handleProductsCardImageSubmit(event: SubmitEvent) {
+	event.preventDefault();
 	if (!content) return;
-	const input = event.target as HTMLInputElement;
-	const slug = input.dataset.productCategoryCover;
+	const form = event.currentTarget as HTMLFormElement;
+	const input = $('#products-card-image-file') as HTMLInputElement;
 	const file = input.files?.[0];
-	if (!slug || !file) return;
-	const category = content.productCategories.find((item) => item.slug === slug);
-	if (!category) return;
-	const path = await uploadImage('categories', file);
-	await saveProductCategoryCover(slug, path);
-	await removeStoredImage(category.cover_path).catch(() => undefined);
-	await refreshContent();
-	notify('Portada de categoría de productos actualizada.');
+	if (!file) throw new Error('Selecciona una imagen para la tarjeta de productos.');
+	if (!beginFormSubmission(form, 'Guardando…')) return;
+	let uploadedPath = '';
+	try {
+		const oldPath = content.settings.products_card_image_path;
+		uploadedPath = await uploadImage('products', file);
+		try {
+			await saveSettings({ products_card_image_path: uploadedPath });
+		} catch (error) {
+			await removeStoredImage(uploadedPath).catch(() => undefined);
+			uploadedPath = '';
+			throw error;
+		}
+		await removeStoredImage(oldPath).catch(() => undefined);
+		if (productsCardPreviewUrl) URL.revokeObjectURL(productsCardPreviewUrl);
+		productsCardPreviewUrl = '';
+		form.reset();
+		await refreshContent();
+		notify('Imagen de Productos personalizables actualizada.');
+	} finally {
+		endFormSubmission(form);
+	}
 }
 
 async function handleGalleryUpload(event: Event) {
@@ -501,14 +474,14 @@ $('#admin-plan-categories')!.addEventListener('click', (event) => {
 	renderPlans();
 });
 $('#category-cover-list')!.addEventListener('change', (event) => void handleCategoryCover(event).catch((error) => notify(error.message, true)));
-$('#product-category-cover-list')!.addEventListener('change', (event) => void handleProductCategoryCover(event).catch((error) => notify(error.message, true)));
-$('#admin-product-categories')!.addEventListener('click', (event) => {
-	const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-product-admin-category]');
-	if (!button) return;
-	selectedProductCategory = button.dataset.productAdminCategory!;
-	renderProductCategoryFilters();
-	renderProducts();
+$('#products-card-image-file')!.addEventListener('change', (event) => {
+	const file = (event.currentTarget as HTMLInputElement).files?.[0];
+	if (!file) return;
+	if (productsCardPreviewUrl) URL.revokeObjectURL(productsCardPreviewUrl);
+	productsCardPreviewUrl = URL.createObjectURL(file);
+	($('#products-card-image-preview') as HTMLImageElement).src = productsCardPreviewUrl;
 });
+$('#products-card-image-form')!.addEventListener('submit', (event) => void handleProductsCardImageSubmit(event as SubmitEvent).catch((error) => notify(error.message, true)));
 $('#gallery-upload')!.addEventListener('change', (event) => void handleGalleryUpload(event).catch((error) => notify(error.message, true)));
 $('#admin-calendar-days')!.addEventListener('click', (event) => void handleCalendarClick(event).catch((error) => notify(error.message, true)));
 $('#admin-calendar-prev')!.addEventListener('click', () => {

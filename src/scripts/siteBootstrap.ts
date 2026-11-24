@@ -26,6 +26,7 @@ function applySettings(content: SiteContent) {
 	const hero = document.querySelector<HTMLElement>('.hero');
 	const heroImage = document.querySelector<HTMLImageElement>('#hero-image');
 	const aboutImage = document.querySelector<HTMLImageElement>('#about-image');
+	const productsCardImage = document.querySelector<HTMLImageElement>('#products-card-image');
 	if (titleLine) titleLine.textContent = settings.hero_title_line;
 	if (titleEmphasis) titleEmphasis.textContent = settings.hero_title_emphasis;
 	if (hero) {
@@ -39,6 +40,10 @@ function applySettings(content: SiteContent) {
 	if (aboutImage) {
 		aboutImage.src = imageUrl(settings.about_image_path);
 		aboutImage.alt = settings.about_image_alt;
+	}
+	if (productsCardImage) {
+		productsCardImage.src = imageUrl(settings.products_card_image_path);
+		productsCardImage.alt = settings.products_card_image_alt;
 	}
 	const paragraphs = document.querySelector<HTMLElement>('#about-paragraphs');
 	if (paragraphs) paragraphs.innerHTML = settings.about_paragraphs.map((text) => `<p>${escapeHtml(text)}</p>`).join('');
@@ -56,35 +61,19 @@ function renderCategories(content: SiteContent) {
 	}).join('');
 }
 
-function renderProductCategories(content: SiteContent) {
-	const container = document.querySelector<HTMLElement>('#product-categories');
-	if (!container) return;
-	container.innerHTML = content.productCategories.map((category) => {
-		const count = content.products.filter((product) => product.category_slug === category.slug).length;
-		return `<button class="category-card" type="button" data-product-category="${escapeHtml(category.slug)}" aria-label="Ver ${count} ${count === 1 ? 'producto' : 'productos'} de ${escapeHtml(category.name)}">
-			<img src="${escapeHtml(imageUrl(category.cover_path))}" alt="" loading="lazy" /><span class="category-card-shade"></span>
-			<span class="category-card-copy"><strong>${escapeHtml(category.name)}</strong><small>${count} ${count === 1 ? 'producto' : 'productos'} <i>↗</i></small></span>
-		</button>`;
-	}).join('');
-}
-
-function renderProducts(categorySlug: string) {
+function renderProducts() {
 	if (!siteContent) return;
 	const container = document.querySelector<HTMLElement>('#public-product-list');
 	if (!container) return;
-	const category = siteContent.productCategories.find((item) => item.slug === categorySlug);
-	const products = siteContent.products.filter((product) => product.category_slug === categorySlug);
-	const heading = document.querySelector<HTMLElement>('#products-dialog-heading');
-	if (heading && category) heading.textContent = category.name;
 	const cupPerUsd = Number(siteContent.settings.cup_per_usd);
-	container.innerHTML = products.length ? products.map((product) => {
+	container.innerHTML = siteContent.products.length ? siteContent.products.map((product) => {
 		const message = encodeURIComponent(`Me interesa ${product.name}`);
 		return `<article class="product"><img src="${escapeHtml(imageUrl(product.image_path))}" alt="${escapeHtml(product.name)}" loading="lazy" /><div>
 			<h3>${escapeHtml(product.name)}</h3><p>${escapeHtml(product.description)}</p>
 			<span>${money(product.price_usd)} USD <i>·</i> ${money(product.price_usd * cupPerUsd)} CUP</span>
 			<a class="text-link product-link" href="https://wa.me/5352564951?text=${message}" target="_blank" rel="noopener noreferrer">Me interesa <span>↗</span></a>
 		</div></article>`;
-	}).join('') : `<p class="category-empty">Aún no hay productos en “<strong>${escapeHtml(category?.name ?? '')}</strong>”. Escríbenos para consultar.</p>`;
+	}).join('') : '<p class="category-empty">Aún no hay productos disponibles. Escríbenos para consultar.</p>';
 	productsDialog?.showModal();
 }
 
@@ -196,10 +185,7 @@ function bindInteractions() {
 		const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-plan-category]');
 		if (button?.dataset.planCategory) renderPlans(button.dataset.planCategory);
 	});
-	document.querySelector('#product-categories')?.addEventListener('click', (event) => {
-		const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-product-category]');
-		if (button?.dataset.productCategory) renderProducts(button.dataset.productCategory);
-	});
+	document.querySelector('#products-card')?.addEventListener('click', () => renderProducts());
 	document.querySelector('#public-plan-list')?.addEventListener('click', (event) => {
 		const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('[data-book-plan]');
 		if (link?.dataset.bookPlan) {
@@ -235,7 +221,6 @@ async function initializePublicContent() {
 		siteContent = await loadSiteContent();
 		applySettings(siteContent);
 		renderCategories(siteContent);
-		renderProductCategories(siteContent);
 		renderGallery(siteContent);
 	} catch (error) {
 		console.error('No se pudo cargar el contenido de Supabase; se mantiene el contenido de respaldo.', error);

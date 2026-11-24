@@ -1,24 +1,15 @@
 ---
 const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const categories = [
-	{ slug: 'laminas-aluminio-sublimable', name: 'Láminas de aluminio sublimable', image: 'img/carrusel1.avif' },
-	{ slug: 'llaveros-mdf-sublimables', name: 'Llaveros MDF sublimables', image: 'img/carrusel2.avif' },
-	{ slug: 'llaveros-acrilico-sublimacion', name: 'Llaveros de acrílico con sublimación', image: 'img/carrusel3.avif' },
-	{ slug: 'jarras-personalizadas', name: 'Jarras Personalizadas', image: 'img/tasa.webp' },
-	{ slug: 'bolsas-lienzos-personalizadas', name: 'Bolsas de lienzos personalizadas', image: 'img/carrusel4.avif' },
-	{ slug: 'relojes-personalizados', name: 'Relojes Personalizados', image: 'img/carrusel5.avif' },
-];
 ---
 <section class="section-wrap products" id="productos">
 	<div class="section-heading"><div><p class="eyebrow">PEQUEÑOS DETALLES, GRANDES RECUERDOS</p><h2>Servicios <em>Extras</em></h2></div><p>Productos personalizados para regalar y conservar tus recuerdos.</p></div>
-	<div class="plan-categories product-categories" id="product-categories" role="group" aria-label="Categorías de productos">
-		{categories.map((category) => <button class="category-card" type="button" data-product-category={category.slug} aria-label={`Ver productos de ${category.name}`}>
-			<img src={`${base}${category.image}`} alt="" loading="lazy" /><span class="category-card-shade"></span>
-			<span class="category-card-copy"><strong>{category.name}</strong><small>Ver productos <i>↗</i></small></span>
-		</button>)}
-	</div>
+	<button class="product-collection-card" id="products-card" type="button" aria-label="Ver todos los productos personalizables">
+		<img id="products-card-image" src={`${base}img/camisa.avif`} alt="Producto personalizable" loading="lazy" />
+		<span class="product-collection-shade"></span>
+		<span class="product-collection-copy"><small>ESTUDIO FOTOGRÁFICO FÉNIX</small><strong>Productos personalizables</strong><span>Ver catálogo <i>↗</i></span></span>
+	</button>
 	<p class="fine-print">Productos y precios sujetos a disponibilidad.</p>
 </section>
 <dialog class="plans-dialog products-dialog" id="products-dialog" aria-labelledby="products-dialog-heading">
-	<div class="plans-dialog-inner"><div class="plans-dialog-header"><div><p class="eyebrow">PEQUEÑOS DETALLES, GRANDES RECUERDOS</p><h2 id="products-dialog-heading">Productos</h2></div><button class="booking-close" id="products-dialog-close" type="button" aria-label="Cerrar productos">×</button></div><div class="product-grid" id="public-product-list"></div></div>
+	<div class="plans-dialog-inner"><div class="plans-dialog-header"><div><p class="eyebrow">PEQUEÑOS DETALLES, GRANDES RECUERDOS</p><h2 id="products-dialog-heading">Productos personalizables</h2></div><button class="booking-close" id="products-dialog-close" type="button" aria-label="Cerrar productos">×</button></div><div class="product-grid" id="public-product-list"></div></div>
 </dialog>
